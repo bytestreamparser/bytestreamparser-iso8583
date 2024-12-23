@@ -59,7 +59,7 @@
             <dependency>
                 <groupId>org.bytestreamparser</groupId>
                 <artifactId>bytestreamparser-bom</artifactId>
-                <version>0.0.2</version>
+                <version>0.02</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
