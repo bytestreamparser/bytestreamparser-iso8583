@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(RandomParametersExtension.class)
 abstract class BitmapTestBase {
-  protected static Random RANDOM = new Random();
+  private static final Random RANDOM = new Random();
   protected Bitmap bitmap;
   protected int bytes;
   protected int extensions;
@@ -128,12 +128,12 @@ abstract class BitmapTestBase {
   void cardinality() {
     int bit = validBit(RANDOM.nextInt(1, bitmap.capacity()));
 
-    assertThat(bitmap.cardinality()).isEqualTo(0);
+    assertThat(bitmap.cardinality()).isZero();
     bitmap.set(bit);
-    assertThat(bitmap.cardinality()).isGreaterThan(0);
+    assertThat(bitmap.cardinality()).isPositive();
 
     bitmap.clear(bit);
-    assertThat(bitmap.cardinality()).isEqualTo(0);
+    assertThat(bitmap.cardinality()).isZero();
   }
 
   @Test

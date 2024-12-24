@@ -6,7 +6,7 @@ import org.bytestreamparser.api.testing.extension.RandomParametersExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class FixedBitmapTest extends BitmapTestBase {
+class FixedBitmapTest extends BitmapTestBase {
   @BeforeEach
   void setUp(@RandomParametersExtension.Randomize(intMin = 1, intMax = 8) int bytes) {
     super.setUp(bytes, 0);
