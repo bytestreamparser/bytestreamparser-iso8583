@@ -2,47 +2,49 @@ package org.bytestreamparser.iso8583.data;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.bytestreamparser.api.testing.extension.RandomParametersExtension;
+import java.util.random.RandomGenerator;
+import org.bytestreamparser.api.testing.extension.RandomParametersExtension.Randomize;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class FixedBitmapTest extends BitmapTestBase {
+class FixedBitmapTest extends BitmapTestBase<FixedBitmap> {
+  private int bytes;
+
   @BeforeEach
-  void setUp(@RandomParametersExtension.Randomize(intMin = 1, intMax = 8) int bytes) {
-    super.setUp(bytes, 0);
+  void setUp(@Randomize(intMin = 1, intMax = 8) int bytes) {
+    this.bytes = bytes;
+    bitmap = new FixedBitmap(bytes);
   }
 
   @Test
   void value_of() {
-    Bitmap parsed = Bitmap.valueOf(1, new byte[] {0b01111111});
-
-    assertThat(parsed.capacity()).isEqualTo(8);
-    assertThat(parsed.cardinality()).isEqualTo(7);
-    assertThat(parsed.get(1)).isFalse();
-  }
-
-  @Test
-  void set_first_bit() {
-    assertThat(bitmap.get(1)).isFalse();
-    bitmap.set(1);
-    assertThat(bitmap.get(1)).isTrue();
-  }
-
-  @Override
-  @Test
-  void clear_first_bit() {
-    assertThat(bitmap.get(1)).isFalse();
-    bitmap.clear(1);
-    assertThat(bitmap.get(1)).isFalse();
-
-    bitmap.set(1);
-    assertThat(bitmap.get(1)).isTrue();
-    bitmap.clear(1);
+    FixedBitmap bitmap = FixedBitmap.valueOf(new byte[] {0b01111111});
+    assertThat(bitmap.capacity()).isEqualTo(8);
+    assertThat(bitmap.cardinality()).isEqualTo(7);
     assertThat(bitmap.get(1)).isFalse();
   }
 
   @Override
-  protected int validBit(int bit) {
-    return bit;
+  @Test
+  void to_byte_array(@Randomize RandomGenerator generator) {
+    int bit = generator.nextInt(1, bitmap.capacity());
+    bitmap.set(bit);
+    String binaryString = toBinaryString(bitmap.toByteArray());
+    assertThat(binaryString.charAt(bit - 1)).isEqualTo('1');
+  }
+
+  @Override
+  protected void createBitmap(int bytes) {
+    new FixedBitmap(bytes);
+  }
+
+  @Override
+  protected int expectedCapacity() {
+    return this.bytes * Byte.SIZE;
+  }
+
+  @Override
+  protected int randomDataBit(RandomGenerator generator, Bitmap bitmap) {
+    return generator.nextInt(1, bitmap.capacity() + 1);
   }
 }

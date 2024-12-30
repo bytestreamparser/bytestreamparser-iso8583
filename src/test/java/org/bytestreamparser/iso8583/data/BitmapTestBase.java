@@ -3,65 +3,56 @@ package org.bytestreamparser.iso8583.data;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension.Randomize;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(RandomParametersExtension.class)
-abstract class BitmapTestBase {
-  private static final Random RANDOM = new Random();
-  protected Bitmap bitmap;
-  protected int bytes;
-  protected int extensions;
+abstract class BitmapTestBase<T extends Bitmap> {
+  protected T bitmap;
 
-  void setUp(int bytes, int extensions) {
-    this.bytes = bytes;
-    this.extensions = extensions;
-    bitmap = new Bitmap(bytes, extensions);
+  protected static String toBinaryString(byte[] bytes) {
+    StringBuilder sb = new StringBuilder();
+    for (byte b : bytes) {
+      sb.append(String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0'));
+    }
+    return sb.toString();
   }
 
   @Test
   void validates_bytes(@Randomize(intMax = 1) int negative) {
-    assertThatThrownBy(() -> new Bitmap(negative, extensions))
+    assertThatThrownBy(() -> createBitmap(negative))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("bytes should be greater than 0, but got [%d]", negative);
   }
 
   @Test
-  void validates_extensions(@Randomize(intMax = 0) int negative) {
-    assertThatThrownBy(() -> new Bitmap(bytes, negative))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("extensions should be greater than or equal to 0, but got [%d]", negative);
-  }
-
-  @Test
   void validates_maximum_capacity() {
-    assertThatThrownBy(() -> new Bitmap(Integer.MAX_VALUE, 2))
+    assertThatThrownBy(() -> createBitmap(Integer.MAX_VALUE))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Maximum capacity exceeded");
+        .hasMessage("maximum capacity 268435455 bytes exceeded: [%d]", Integer.MAX_VALUE);
   }
 
   @Test
   void capacity() {
-    assertThat(bitmap.capacity()).isEqualTo(bytes * Byte.SIZE * (1 + extensions));
+    assertThat(bitmap.capacity()).isEqualTo(expectedCapacity());
   }
 
   @Test
-  void get() {
-    assertThat(bitmap.get(RANDOM.nextInt(1, bitmap.capacity()))).isFalse();
+  void get(@Randomize RandomGenerator generator) {
+    assertThat(bitmap.get(generator.nextInt(1, bitmap.capacity()))).isFalse();
   }
 
   @Test
-  void get_out_of_bounds() {
-    int negative = RANDOM.nextInt(Integer.MIN_VALUE, 1);
+  void get_out_of_bounds(@Randomize RandomGenerator generator) {
+    int negative = generator.nextInt(Integer.MIN_VALUE, 1);
     assertThatThrownBy(() -> bitmap.get(negative))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("bit should be between 1 and %d, but got [%d]", bitmap.capacity(), negative);
 
-    int overCapacity = RANDOM.nextInt(bitmap.capacity() + 1, Integer.MAX_VALUE);
+    int overCapacity = generator.nextInt(bitmap.capacity() + 1, Integer.MAX_VALUE);
     assertThatThrownBy(() -> bitmap.get(overCapacity))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage(
@@ -69,21 +60,21 @@ abstract class BitmapTestBase {
   }
 
   @Test
-  void set() {
-    int bit = validBit(RANDOM.nextInt(1, bitmap.capacity()));
+  void set(@Randomize RandomGenerator generator) {
+    int bit = randomDataBit(generator, bitmap);
     assertThat(bitmap.get(bit)).isFalse();
     bitmap.set(bit);
     assertThat(bitmap.get(bit)).isTrue();
   }
 
   @Test
-  void set_out_of_bounds() {
-    int negative = RANDOM.nextInt(Integer.MIN_VALUE, 1);
+  void set_out_of_bounds(@Randomize RandomGenerator generator) {
+    int negative = generator.nextInt(Integer.MIN_VALUE, 1);
     assertThatThrownBy(() -> bitmap.set(negative))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("bit should be between 1 and %d, but got [%d]", bitmap.capacity(), negative);
 
-    int overCapacity = RANDOM.nextInt(bitmap.capacity() + 1, Integer.MAX_VALUE);
+    int overCapacity = generator.nextInt(bitmap.capacity() + 1, Integer.MAX_VALUE);
     assertThatThrownBy(() -> bitmap.set(overCapacity))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage(
@@ -91,8 +82,8 @@ abstract class BitmapTestBase {
   }
 
   @Test
-  void clear() {
-    int bit = validBit(RANDOM.nextInt(1, bitmap.capacity()));
+  void clear(@Randomize RandomGenerator generator) {
+    int bit = randomDataBit(generator, bitmap);
 
     assertThat(bitmap.get(bit)).isFalse();
     bitmap.clear(bit);
@@ -105,13 +96,13 @@ abstract class BitmapTestBase {
   }
 
   @Test
-  void clear_out_of_bounds() {
-    int negative = RANDOM.nextInt(Integer.MIN_VALUE, 1);
+  void clear_out_of_bounds(@Randomize RandomGenerator generator) {
+    int negative = generator.nextInt(Integer.MIN_VALUE, 1);
     assertThatThrownBy(() -> bitmap.clear(negative))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("bit should be between 1 and %d, but got [%d]", bitmap.capacity(), negative);
 
-    int overCapacity = RANDOM.nextInt(bitmap.capacity() + 1, Integer.MAX_VALUE);
+    int overCapacity = generator.nextInt(bitmap.capacity() + 1, Integer.MAX_VALUE);
     assertThatThrownBy(() -> bitmap.clear(overCapacity))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage(
@@ -119,14 +110,8 @@ abstract class BitmapTestBase {
   }
 
   @Test
-  abstract void set_first_bit();
-
-  @Test
-  abstract void clear_first_bit();
-
-  @Test
-  void cardinality() {
-    int bit = validBit(RANDOM.nextInt(1, bitmap.capacity()));
+  void cardinality(@Randomize RandomGenerator generator) {
+    int bit = randomDataBit(generator, bitmap);
 
     assertThat(bitmap.cardinality()).isZero();
     bitmap.set(bit);
@@ -137,12 +122,20 @@ abstract class BitmapTestBase {
   }
 
   @Test
-  void int_stream() {
-    assertThat(bitmap.stream().boxed().toList()).isEqualTo(List.of());
+  void int_stream(@Randomize RandomGenerator generator) {
+    int bit = randomDataBit(generator, bitmap);
+    assertThat(bitmap.stream().boxed().toList()).isEmpty();
 
-    bitmap.set(2);
-    assertThat(bitmap.stream().boxed().toList()).isEqualTo(List.of(2));
+    bitmap.set(bit);
+    assertThat(bitmap.stream().boxed().toList()).contains(bit);
   }
 
-  protected abstract int validBit(int bit);
+  @Test
+  abstract void to_byte_array(@Randomize RandomGenerator generator);
+
+  protected abstract void createBitmap(int bytes);
+
+  protected abstract int expectedCapacity();
+
+  protected abstract int randomDataBit(RandomGenerator generator, Bitmap bitmap);
 }
