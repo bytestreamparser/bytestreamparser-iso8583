@@ -5,10 +5,9 @@ import static org.bytestreamparser.scalar.util.Preconditions.check;
 import java.util.BitSet;
 import java.util.stream.IntStream;
 
-public class FixedBitmap {
+public class FixedBitmap implements Bitmap {
   private static final int MAXIMUM_BYTES = Integer.MAX_VALUE / Byte.SIZE;
   private static final String BYTES_ERROR = "bytes should be greater than 0, but got [%d]";
-  private static final String BIT_ERROR = "bit should be between 1 and %d, but got [%d]";
   private static final String MAXIMUM_CAPACITY_ERROR = "maximum capacity %d bytes exceeded: [%d]";
   private final int bytes;
   private final BitSet bitSet;
@@ -18,6 +17,13 @@ public class FixedBitmap {
     check(bytes <= MAXIMUM_BYTES, MAXIMUM_CAPACITY_ERROR, MAXIMUM_BYTES, bytes);
     this.bytes = bytes;
     this.bitSet = new BitSet(bytes * Byte.SIZE);
+  }
+
+  public static FixedBitmap valueOf(byte[] bytes) {
+    FixedBitmap bitmap = new FixedBitmap(bytes.length);
+    BitSet.valueOf(bytes).stream()
+        .forEach(bit -> bitmap.set(bit / Byte.SIZE * Byte.SIZE + Byte.SIZE - (bit % Byte.SIZE)));
+    return bitmap;
   }
 
   public int capacity() {
