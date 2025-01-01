@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.random.RandomGenerator;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension.Randomize;
+import org.bytestreamparser.iso8583.helper.TestHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -68,7 +69,7 @@ class ExtendableBitmapTest extends BitmapTestBase<ExtendableBitmap> {
   void to_byte_array(@Randomize RandomGenerator generator) {
     int bit = generator.nextInt(1, bitmap.capacity());
     bitmap.set(bit);
-    String binaryString = toBinaryString(bitmap.toByteArray());
+    String binaryString = TestHelper.toBinaryString(bitmap.toByteArray());
     assertThat(binaryString.charAt(bit - 1)).isEqualTo('1');
   }
 
@@ -79,7 +80,7 @@ class ExtendableBitmapTest extends BitmapTestBase<ExtendableBitmap> {
     int baseDataBit =
         generator.ints(1, bytes * Byte.SIZE).filter(b -> b != 1).findFirst().orElseThrow();
     bitmap.set(baseDataBit);
-    String binaryString = toBinaryString(bitmap.toByteArray());
+    String binaryString = TestHelper.toBinaryString(bitmap.toByteArray());
     assertThat(binaryString.charAt(baseDataBit - 1)).isEqualTo('1');
   }
 
@@ -89,7 +90,7 @@ class ExtendableBitmapTest extends BitmapTestBase<ExtendableBitmap> {
     int dataBit = extensionBit + bytes * Byte.SIZE + 1;
 
     bitmap.set(dataBit);
-    String binaryString = toBinaryString(bitmap.toByteArray());
+    String binaryString = TestHelper.toBinaryString(bitmap.toByteArray());
 
     assertThat(binaryString.charAt(extensionBit - 1)).isEqualTo('1');
     assertThat(binaryString.charAt(dataBit - 1)).isEqualTo('1');
@@ -101,7 +102,7 @@ class ExtendableBitmapTest extends BitmapTestBase<ExtendableBitmap> {
       int dataBit = extensionBit + bytes * Byte.SIZE + 1;
       bitmap.set(dataBit);
     }
-    String binaryString = toBinaryString(bitmap.toByteArray());
+    String binaryString = TestHelper.toBinaryString(bitmap.toByteArray());
     for (int extensionBit = 1; extensionBit <= extensions; extensionBit += bytes * Byte.SIZE) {
       int dataBit = extensionBit + bytes * Byte.SIZE + 1;
       assertThat(binaryString.charAt(extensionBit - 1)).isEqualTo('1');
