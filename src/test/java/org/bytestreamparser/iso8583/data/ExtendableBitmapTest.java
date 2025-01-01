@@ -76,7 +76,8 @@ class ExtendableBitmapTest extends BitmapTestBase<ExtendableBitmap> {
   void to_byte_array_without_using_extensions(@Randomize RandomGenerator generator) {
     assertThat(bitmap.toByteArray()).isEqualTo(new byte[bytes]);
 
-    int baseDataBit = generator.nextInt(1, bytes * Byte.SIZE);
+    int baseDataBit =
+        generator.ints(1, bytes * Byte.SIZE).filter(b -> b != 1).findFirst().orElseThrow();
     bitmap.set(baseDataBit);
     String binaryString = toBinaryString(bitmap.toByteArray());
     assertThat(binaryString.charAt(baseDataBit - 1)).isEqualTo('1');
@@ -92,6 +93,20 @@ class ExtendableBitmapTest extends BitmapTestBase<ExtendableBitmap> {
 
     assertThat(binaryString.charAt(extensionBit - 1)).isEqualTo('1');
     assertThat(binaryString.charAt(dataBit - 1)).isEqualTo('1');
+  }
+
+  @Test
+  void to_byte_array_with_fully_used_extensions() {
+    for (int extensionBit = 1; extensionBit <= extensions; extensionBit += bytes * Byte.SIZE) {
+      int dataBit = extensionBit + bytes * Byte.SIZE + 1;
+      bitmap.set(dataBit);
+    }
+    String binaryString = toBinaryString(bitmap.toByteArray());
+    for (int extensionBit = 1; extensionBit <= extensions; extensionBit += bytes * Byte.SIZE) {
+      int dataBit = extensionBit + bytes * Byte.SIZE + 1;
+      assertThat(binaryString.charAt(extensionBit - 1)).isEqualTo('1');
+      assertThat(binaryString.charAt(dataBit - 1)).isEqualTo('1');
+    }
   }
 
   @Override
