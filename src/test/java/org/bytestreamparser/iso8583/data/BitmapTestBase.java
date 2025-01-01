@@ -13,14 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 abstract class BitmapTestBase<T extends Bitmap> {
   protected T bitmap;
 
-  protected static String toBinaryString(byte[] bytes) {
-    StringBuilder sb = new StringBuilder();
-    for (byte b : bytes) {
-      sb.append(String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0'));
-    }
-    return sb.toString();
-  }
-
   @Test
   void validates_bytes(@Randomize(intMax = 1) int negative) {
     assertThatThrownBy(() -> createBitmap(negative))

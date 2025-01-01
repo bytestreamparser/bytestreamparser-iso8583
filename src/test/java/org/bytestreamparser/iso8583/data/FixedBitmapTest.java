@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.random.RandomGenerator;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension.Randomize;
+import org.bytestreamparser.iso8583.helper.TestHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,7 @@ class FixedBitmapTest extends BitmapTestBase<FixedBitmap> {
   void to_byte_array(@Randomize RandomGenerator generator) {
     int bit = generator.nextInt(1, bitmap.capacity());
     bitmap.set(bit);
-    String binaryString = toBinaryString(bitmap.toByteArray());
+    String binaryString = TestHelper.toBinaryString(bitmap.toByteArray());
     assertThat(binaryString.charAt(bit - 1)).isEqualTo('1');
   }
 
