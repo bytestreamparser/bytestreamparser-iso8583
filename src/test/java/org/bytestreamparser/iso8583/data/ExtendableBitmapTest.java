@@ -68,7 +68,7 @@ class ExtendableBitmapTest extends BitmapTestBase<ExtendableBitmap> {
   @Override
   @Test
   void to_byte_array(@Randomize RandomGenerator generator) {
-    int bit = generator.nextInt(1, bitmap.capacity());
+    int bit = randomDataBit(generator, bitmap);
     bitmap.set(bit);
     String binaryString = TestHelper.toBinaryString(bitmap.toByteArray());
     assertThat(binaryString.charAt(bit - 1)).isEqualTo('1');
