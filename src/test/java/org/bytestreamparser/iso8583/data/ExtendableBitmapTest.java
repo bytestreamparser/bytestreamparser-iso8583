@@ -3,7 +3,9 @@ package org.bytestreamparser.iso8583.data;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.List;
 import java.util.random.RandomGenerator;
+import java.util.stream.IntStream;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension.Randomize;
 import org.bytestreamparser.iso8583.helper.TestHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,19 +19,18 @@ class ExtendableBitmapTest extends BitmapTestBase<ExtendableBitmap> {
   @BeforeEach
   void setUp(
       @Randomize(intMin = 1, intMax = 9) int bytes,
-      @Randomize(intMin = 1, intMax = 4) int extensions) {
+      @Randomize(intMin = 2, intMax = 4) int extensions) {
     this.bytes = bytes;
     this.extensions = extensions;
     this.bitmap = new ExtendableBitmap(bytes);
-    for (int index = 0; index < extensions; index++) {
-      bitmap.addExtension(new FixedBitmap(bytes));
-    }
+    bitmap.addExtensions(
+        IntStream.range(0, extensions).mapToObj(ignored -> new FixedBitmap(bytes)).toList());
   }
 
   @Test
   void add_extension_with_invalid_capacity() {
     FixedBitmap invalidBitmap = new FixedBitmap(bytes + 1);
-    assertThatThrownBy(() -> bitmap.addExtension(invalidBitmap))
+    assertThatThrownBy(() -> bitmap.addExtensions(List.of(invalidBitmap)))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage(
             "extension capacity should be %s, but got [%s]",
@@ -117,7 +118,7 @@ class ExtendableBitmapTest extends BitmapTestBase<ExtendableBitmap> {
 
   @Override
   protected int expectedCapacity() {
-    return bytes * Byte.SIZE * (1 + extensions);
+    return bytes * Byte.SIZE * extensions;
   }
 
   @Override
@@ -131,9 +132,9 @@ class ExtendableBitmapTest extends BitmapTestBase<ExtendableBitmap> {
 
   private int randomExtensionBit(RandomGenerator generator, Bitmap bitmap) {
     return generator
-        .ints(1, bitmap.capacity() + 1)
+        .ints(1, bitmap.capacity())
         .filter(b -> b % (bytes * Byte.SIZE) == 1)
-        .filter(b -> b < (extensions * bytes * Byte.SIZE))
+        .filter(b -> b < ((extensions - 1) * bytes * Byte.SIZE))
         .findFirst()
         .orElseThrow();
   }

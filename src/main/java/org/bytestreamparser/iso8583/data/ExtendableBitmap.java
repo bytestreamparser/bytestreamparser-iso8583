@@ -8,24 +8,37 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class ExtendableBitmap implements Bitmap {
-  public static final String EXTENSION_ERROR_MESSAGE =
+  private static final String EXTENSION_ERROR_MESSAGE =
       "extension capacity should be %s, but got [%s]";
+  private static final FixedBitmap EMPTY = new FixedBitmap(1);
   private final int bytes;
   private final List<FixedBitmap> bitmaps;
 
   public ExtendableBitmap(int bytes) {
+    Bitmap.check(bytes);
     this.bytes = bytes;
     this.bitmaps = new ArrayList<>();
-    this.bitmaps.add(new FixedBitmap(bytes));
   }
 
-  public ExtendableBitmap addExtension(FixedBitmap bitmap) {
-    check(
-        bitmap.capacity() == bytes * Byte.SIZE,
-        EXTENSION_ERROR_MESSAGE,
-        bytes * Byte.SIZE,
-        bitmap.capacity());
-    bitmaps.add(bitmap);
+  private static FixedBitmap recalibrate(FixedBitmap next, FixedBitmap prev) {
+    if (next.cardinality() > 0) {
+      prev.set(1);
+    } else {
+      prev.clear(1);
+    }
+    return prev;
+  }
+
+  public ExtendableBitmap addExtensions(List<FixedBitmap> extensions) {
+    for (FixedBitmap extension : extensions) {
+      check(
+          extension.capacity() == bytes * Byte.SIZE,
+          EXTENSION_ERROR_MESSAGE,
+          bytes * Byte.SIZE,
+          extension.capacity());
+    }
+    bitmaps.addAll(extensions);
+    recalibrate();
     return this;
   }
 
@@ -77,12 +90,9 @@ public class ExtendableBitmap implements Bitmap {
   }
 
   private void recalibrate() {
-    for (int index = bitmaps.size() - 1; index > 0; index--) {
-      if (bitmaps.get(index).cardinality() > 0) {
-        bitmaps.get(index - 1).set(1);
-      } else {
-        bitmaps.get(index - 1).clear(1);
-      }
+    FixedBitmap next = EMPTY;
+    for (int index = bitmaps.size() - 1; index >= 0; index--) {
+      next = recalibrate(next, bitmaps.get(index));
     }
   }
 
