@@ -13,7 +13,7 @@ import org.bytestreamparser.api.parser.DataParser;
 import org.bytestreamparser.iso8583.data.FixedBitmap;
 
 public class FixedBitmapParser<P extends Data<P>> extends DataParser<P, FixedBitmap> {
-  public static final String ERROR_MESSAGE = "%s: value must be %d bytes, but got [%d]";
+  private static final String ERROR_MESSAGE = "%s: value must be %d bytes, but got [%d]";
   private final int bytes;
 
   public FixedBitmapParser(String id, int bytes) {

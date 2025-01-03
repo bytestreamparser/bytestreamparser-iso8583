@@ -62,7 +62,7 @@ class FixedBitmapParserTest {
   }
 
   @Test
-  void parse_insufficient_data(@Randomize byte[] content) throws IOException {
+  void parse_insufficient_data(@Randomize byte[] content) {
     ByteArrayInputStream input = new ByteArrayInputStream(content);
     FixedBitmapParser<TestData> parser = new FixedBitmapParser<>("id", content.length + 1);
     assertThatThrownBy(() -> parser.parse(input))

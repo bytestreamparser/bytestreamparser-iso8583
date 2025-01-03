@@ -6,15 +6,11 @@ import java.util.BitSet;
 import java.util.stream.IntStream;
 
 public class FixedBitmap implements Bitmap {
-  private static final int MAXIMUM_BYTES = Integer.MAX_VALUE / Byte.SIZE;
-  private static final String BYTES_ERROR = "bytes should be greater than 0, but got [%d]";
-  private static final String MAXIMUM_CAPACITY_ERROR = "maximum capacity %d bytes exceeded: [%d]";
   private final int bytes;
   private final BitSet bitSet;
 
   public FixedBitmap(int bytes) {
-    check(bytes > 0, BYTES_ERROR, bytes);
-    check(bytes <= MAXIMUM_BYTES, MAXIMUM_CAPACITY_ERROR, MAXIMUM_BYTES, bytes);
+    Bitmap.check(bytes);
     this.bytes = bytes;
     this.bitSet = new BitSet(bytes * Byte.SIZE);
   }
