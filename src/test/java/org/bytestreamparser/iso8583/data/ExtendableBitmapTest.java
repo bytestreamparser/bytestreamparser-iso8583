@@ -29,8 +29,8 @@ class ExtendableBitmapTest extends BitmapTestBase<ExtendableBitmap> {
 
   @Test
   void add_extension_with_invalid_capacity() {
-    FixedBitmap invalidBitmap = new FixedBitmap(bytes + 1);
-    assertThatThrownBy(() -> bitmap.addExtensions(List.of(invalidBitmap)))
+    List<FixedBitmap> extension = List.of(new FixedBitmap(bytes + 1));
+    assertThatThrownBy(() -> bitmap.addExtensions(extension))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage(
             "extension capacity should be %s, but got [%s]",
