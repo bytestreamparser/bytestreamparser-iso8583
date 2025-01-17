@@ -90,7 +90,8 @@ class ExtendableBitmapParserTest {
   @Test
   void parse_with_extension(@Randomize(length = 10) byte[] content) throws IOException {
     content[0] = (byte) (0b10000000 | content[0]);
-    content[content.length / 2] = (byte) (0b01111111 & content[0]);
+    content[content.length / 2] = (byte) (0b01111111 & content[content.length / 2]);
+    content[content.length / 2] = (byte) (0b00000001 | content[content.length / 2]);
     ByteArrayInputStream input = new ByteArrayInputStream(content);
     ExtendableBitmapParser<TestData> parser =
         new ExtendableBitmapParser<>("bitmap", content.length / 2);
