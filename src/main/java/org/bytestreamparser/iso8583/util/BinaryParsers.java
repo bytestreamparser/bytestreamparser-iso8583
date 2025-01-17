@@ -8,7 +8,9 @@ import org.bytestreamparser.iso8583.parser.ExtendableBitmapParser;
 import org.bytestreamparser.iso8583.parser.FixedBitmapParser;
 import org.bytestreamparser.scalar.parser.BinaryParser;
 
-public class BinaryParsers {
+public final class BinaryParsers {
+  private BinaryParsers() {}
+
   public static <P extends Data<P>> DataParser<P, byte[]> BIN(String id, int length) {
     return new BinaryParser<>(id, length);
   }
