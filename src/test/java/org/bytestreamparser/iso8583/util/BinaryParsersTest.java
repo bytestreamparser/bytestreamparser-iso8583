@@ -18,15 +18,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 class BinaryParsersTest {
 
   @Test
-  void BIN(@Randomize byte[] value) throws IOException {
-    DataParser<TestData, byte[]> parser = BinaryParsers.BIN("id", value.length);
+  void bin(@Randomize byte[] value) throws IOException {
+    DataParser<TestData, byte[]> parser = BinaryParsers.bin("id", value.length);
     ByteArrayInputStream input = new ByteArrayInputStream(value);
     assertThat(parser.parse(input)).isEqualTo(value);
   }
 
   @Test
-  void BMP(@Randomize byte[] value) throws IOException {
-    DataParser<TestData, FixedBitmap> parser = BinaryParsers.BMP("bitmap", value.length);
+  void bmp(@Randomize byte[] value) throws IOException {
+    DataParser<TestData, FixedBitmap> parser = BinaryParsers.bmp("bitmap", value.length);
     ByteArrayInputStream input = new ByteArrayInputStream(value);
     FixedBitmap parsed = parser.parse(input);
     FixedBitmap expected = FixedBitmap.valueOf(value);
@@ -37,12 +37,12 @@ class BinaryParsersTest {
   }
 
   @Test
-  void EBMP(@Randomize(length = 10) byte[] value) throws IOException {
+  void ebmp(@Randomize(length = 10) byte[] value) throws IOException {
     value[0] = (byte) (0b10000000 | value[0]);
     value[value.length / 2] = (byte) (0b01111111 & value[value.length / 2]);
     value[value.length / 2] = (byte) (0b00000001 | value[value.length / 2]);
     ByteArrayInputStream input = new ByteArrayInputStream(value);
-    DataParser<TestData, ExtendableBitmap> parser = BinaryParsers.EBMP("bitmap", value.length / 2);
+    DataParser<TestData, ExtendableBitmap> parser = BinaryParsers.ebmp("bitmap", value.length / 2);
     ExtendableBitmap parsed = parser.parse(input);
     char[] chars = TestHelper.toBinaryString(value).toCharArray();
     for (int index = 0; index < chars.length; index++) {

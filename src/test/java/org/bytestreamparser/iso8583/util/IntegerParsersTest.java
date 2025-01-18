@@ -15,15 +15,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 class IntegerParsersTest {
 
   @Test
-  void UBYTE(@Randomize byte[] value) throws IOException {
-    DataParser<TestData, Integer> parser = IntegerParsers.UBYTE("ubyte");
+  void ubyte(@Randomize byte[] value) throws IOException {
+    DataParser<TestData, Integer> parser = IntegerParsers.ubyte("ubyte");
     ByteArrayInputStream input = new ByteArrayInputStream(value);
     assertThat(parser.parse(input)).isEqualTo(value[0] & 0xFF);
   }
 
   @Test
-  void USHORT(@Randomize byte[] value) throws IOException {
-    DataParser<TestData, Integer> parser = IntegerParsers.USHORT("ushort");
+  void ushort(@Randomize byte[] value) throws IOException {
+    DataParser<TestData, Integer> parser = IntegerParsers.ushort("ushort");
     ByteArrayInputStream input = new ByteArrayInputStream(value);
     int expected = ((int) value[0] & 0xFF) << 8 | value[1] & 0xFF;
     assertThat(parser.parse(input)).isEqualTo(expected);

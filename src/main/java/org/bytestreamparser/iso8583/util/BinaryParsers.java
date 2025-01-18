@@ -11,15 +11,15 @@ import org.bytestreamparser.scalar.parser.BinaryParser;
 public final class BinaryParsers {
   private BinaryParsers() {}
 
-  public static <P extends Data<P>> DataParser<P, byte[]> BIN(String id, int length) {
+  public static <P extends Data<P>> DataParser<P, byte[]> bin(String id, int length) {
     return new BinaryParser<>(id, length);
   }
 
-  public static <P extends Data<P>> DataParser<P, FixedBitmap> BMP(String id, int bytes) {
+  public static <P extends Data<P>> DataParser<P, FixedBitmap> bmp(String id, int bytes) {
     return new FixedBitmapParser<>(id, bytes);
   }
 
-  public static <P extends Data<P>> DataParser<P, ExtendableBitmap> EBMP(String id, int bytes) {
+  public static <P extends Data<P>> DataParser<P, ExtendableBitmap> ebmp(String id, int bytes) {
     return new ExtendableBitmapParser<>(id, bytes);
   }
 }

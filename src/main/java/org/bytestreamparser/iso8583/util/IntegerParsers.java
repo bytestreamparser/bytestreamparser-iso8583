@@ -8,11 +8,11 @@ import org.bytestreamparser.scalar.parser.UnsignedShortParser;
 public final class IntegerParsers {
   private IntegerParsers() {}
 
-  public static <P extends Data<P>> DataParser<P, Integer> UBYTE(String id) {
+  public static <P extends Data<P>> DataParser<P, Integer> ubyte(String id) {
     return new UnsignedByteParser<>(id);
   }
 
-  public static <P extends Data<P>> DataParser<P, Integer> USHORT(String id) {
+  public static <P extends Data<P>> DataParser<P, Integer> ushort(String id) {
     return new UnsignedShortParser<>(id);
   }
 }
