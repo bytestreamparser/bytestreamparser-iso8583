@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import org.bytestreamparser.api.parser.DataParser;
 import org.bytestreamparser.api.testing.data.TestData;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension;
@@ -22,6 +23,25 @@ class BinaryParsersTest {
     DataParser<TestData, byte[]> parser = BinaryParsers.bin("id", value.length);
     ByteArrayInputStream input = new ByteArrayInputStream(value);
     assertThat(parser.parse(input)).isEqualTo(value);
+  }
+
+  @Test
+  void ubyte_bin(@Randomize(length = 10) byte[] value) throws IOException {
+    value[0] = 4;
+    DataParser<TestData, byte[]> parser = BinaryParsers.ubyteBin("ubyte-bin");
+    ByteArrayInputStream input = new ByteArrayInputStream(value);
+    assertThat(parser.parse(input)).isEqualTo(Arrays.copyOfRange(value, 1, 5));
+    assertThat(input.available()).isEqualTo(5);
+  }
+
+  @Test
+  void ushort_bin(@Randomize(length = 10) byte[] value) throws IOException {
+    value[0] = 0;
+    value[1] = 3;
+    DataParser<TestData, byte[]> parser = BinaryParsers.ushortBin("ushort-bin");
+    ByteArrayInputStream input = new ByteArrayInputStream(value);
+    assertThat(parser.parse(input)).isEqualTo(Arrays.copyOfRange(value, 2, 5));
+    assertThat(input.available()).isEqualTo(5);
   }
 
   @Test
