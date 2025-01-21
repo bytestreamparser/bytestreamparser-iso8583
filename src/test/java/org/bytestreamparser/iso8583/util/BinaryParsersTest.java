@@ -3,6 +3,7 @@ package org.bytestreamparser.iso8583.util;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import org.bytestreamparser.api.parser.DataParser;
@@ -30,8 +31,16 @@ class BinaryParsersTest {
     value[0] = 4;
     DataParser<TestData, byte[]> parser = BinaryParsers.ubyteBin("ubyte-bin");
     ByteArrayInputStream input = new ByteArrayInputStream(value);
+
     assertThat(parser.parse(input)).isEqualTo(Arrays.copyOfRange(value, 1, 5));
     assertThat(input.available()).isEqualTo(5);
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    parser.pack(input.readAllBytes(), output);
+
+    byte[] packed = output.toByteArray();
+    assertThat(packed[0]).isEqualTo((byte) 5);
+    assertThat(Arrays.copyOfRange(packed, 1, 6)).isEqualTo(Arrays.copyOfRange(value, 5, 10));
   }
 
   @Test
