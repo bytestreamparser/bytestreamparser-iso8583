@@ -2,6 +2,8 @@ package org.bytestreamparser.iso8583.util;
 
 import java.nio.charset.Charset;
 import org.bytestreamparser.api.data.Data;
+import org.bytestreamparser.api.parser.DataParser;
+import org.bytestreamparser.composite.parser.VariableLengthParser;
 import org.bytestreamparser.scalar.parser.BcdStringParser;
 import org.bytestreamparser.scalar.parser.CharStringParser;
 import org.bytestreamparser.scalar.parser.HexStringParser;
@@ -16,6 +18,23 @@ public final class StringParsers {
 
   public static <P extends Data<P>> StringParser<P> plain(String id, int length, Charset charset) {
     return new CharStringParser<>(id, length, charset);
+  }
+
+  public static <P extends Data<P>> DataParser<P, String> ubytePlain(String id, Charset charset) {
+    return varPlain(id, IntegerParsers.ubyte(id), charset);
+  }
+
+  public static <P extends Data<P>> DataParser<P, String> ushortPlain(String id, Charset charset) {
+    return varPlain(id, IntegerParsers.ushort(id), charset);
+  }
+
+  public static <P extends Data<P>> DataParser<P, String> varPlain(
+      String id, DataParser<?, Integer> lengthParser, Charset charset) {
+    return new VariableLengthParser<>(
+        id,
+        lengthParser,
+        length -> plain(id, length, charset),
+        string -> (int) string.codePoints().count());
   }
 
   public static <P extends Data<P>> StringParser<P> hex(String id, int length) {

@@ -3,7 +3,9 @@ package org.bytestreamparser.iso8583.util;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.HexFormat;
 import org.bytestreamparser.api.parser.DataParser;
@@ -36,6 +38,38 @@ class StringParsersTest {
     DataParser<TestData, String> parser =
         StringParsers.plain("plain", (int) value.codePoints().count());
     assertThat(parser.parse(input)).isEqualTo(value);
+  }
+
+  @Test
+  void ubyte_plain(
+      @Randomize(intMin = 1, intMax = 9) Integer length, @Randomize(length = 10) String value)
+      throws IOException {
+    ByteBuffer buffer = ByteBuffer.allocate(Byte.BYTES + value.getBytes().length);
+    buffer.put(length.byteValue()).put(value.getBytes());
+    DataParser<TestData, String> parser =
+        StringParsers.ubytePlain("ubyte-plain", Charset.defaultCharset());
+    ByteArrayInputStream input = new ByteArrayInputStream(buffer.array());
+    assertThat(parser.parse(input)).isEqualTo(value.substring(0, length));
+
+    Integer remaining = 10 - length;
+    assertThat(input.available()).isEqualTo(remaining);
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    parser.pack(new String(input.readAllBytes()), output);
+
+    byte[] packed = output.toByteArray();
+    assertThat(packed[0]).isEqualTo(remaining.byteValue());
+  }
+
+  @Test
+  void ushort_plain(
+      @Randomize(intMin = 1, intMax = 10) Integer length, @Randomize(length = 10) String value)
+      throws IOException {
+    ByteBuffer buffer = ByteBuffer.allocate(Short.BYTES + value.getBytes().length);
+    buffer.putShort(length.shortValue()).put(value.getBytes());
+    DataParser<TestData, String> parser =
+        StringParsers.ushortPlain("ubyte-short", Charset.defaultCharset());
+    ByteArrayInputStream input = new ByteArrayInputStream(buffer.array());
+    assertThat(parser.parse(input)).isEqualTo(value.substring(0, length));
   }
 
   @Test
