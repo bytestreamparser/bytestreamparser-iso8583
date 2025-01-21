@@ -4,12 +4,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import org.bytestreamparser.api.parser.DataParser;
 import org.bytestreamparser.api.testing.data.TestData;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension.Randomize;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @ExtendWith(RandomParametersExtension.class)
 class IntegerParsersTest {
@@ -27,5 +31,30 @@ class IntegerParsersTest {
     ByteArrayInputStream input = new ByteArrayInputStream(value);
     int expected = ((int) value[0] & 0xFF) << 8 | value[1] & 0xFF;
     assertThat(parser.parse(input)).isEqualTo(expected);
+  }
+
+  @ParameterizedTest
+  @ValueSource(
+      strings = {"US-ASCII", "IBM1047", "ISO-8859-1", "UTF-8", "UTF-16", "UTF-16BE", "UTF-16LE"})
+  void plain(
+      String charsetName,
+      @Randomize Integer value,
+      @Randomize(intMin = Character.MIN_RADIX, intMax = Character.MAX_RADIX + 1) int radix)
+      throws IOException {
+    Charset charset = Charset.forName(charsetName);
+    String string = Integer.toString(value, radix);
+    InputStream input = new ByteArrayInputStream(string.getBytes(charset));
+    DataParser<TestData, Integer> parser =
+        IntegerParsers.plain(charsetName, string.length(), radix, charset);
+    assertThat(parser.parse(input)).isEqualTo(value);
+  }
+
+  @Test
+  void plain_with_default_radix(@Randomize Integer value) throws IOException {
+    Charset charset = Charset.defaultCharset();
+    String string = Integer.toString(value);
+    InputStream input = new ByteArrayInputStream(string.getBytes(charset));
+    DataParser<TestData, Integer> parser = IntegerParsers.plain(charset.name(), string.length());
+    assertThat(parser.parse(input)).isEqualTo(value);
   }
 }
