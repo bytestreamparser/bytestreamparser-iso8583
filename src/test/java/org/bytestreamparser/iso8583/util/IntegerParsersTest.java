@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.HexFormat;
 import org.bytestreamparser.api.parser.DataParser;
 import org.bytestreamparser.api.testing.data.TestData;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension;
@@ -55,6 +56,14 @@ class IntegerParsersTest {
     String string = Integer.toString(value);
     InputStream input = new ByteArrayInputStream(string.getBytes(charset));
     DataParser<TestData, Integer> parser = IntegerParsers.plain(charset.name(), string.length());
+    assertThat(parser.parse(input)).isEqualTo(value);
+  }
+
+  @Test
+  void bcd(@Randomize(intMin = 0, intMax = 100) int value) throws IOException {
+    DataParser<TestData, Integer> parser = IntegerParsers.bcd("bcd", 2);
+    ByteArrayInputStream input =
+        new ByteArrayInputStream(HexFormat.of().parseHex(String.format("%02d", value)));
     assertThat(parser.parse(input)).isEqualTo(value);
   }
 }

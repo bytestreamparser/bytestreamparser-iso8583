@@ -26,4 +26,8 @@ public final class IntegerParsers {
       String id, int length, int radix, Charset charset) {
     return new StringIntegerParser<>(id, StringParsers.plain(id, length, charset), length, radix);
   }
+
+  public static <P extends Data<P>> DataParser<P, Integer> bcd(String id, int length) {
+    return new StringIntegerParser<>(id, StringParsers.bcd(id, length), length, 10);
+  }
 }
