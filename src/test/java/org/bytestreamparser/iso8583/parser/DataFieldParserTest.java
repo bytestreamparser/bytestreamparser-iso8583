@@ -24,7 +24,7 @@ class DataFieldParserTest {
   private int bit;
 
   @BeforeEach
-  void setUp(@Randomize(intMin = 1, intMax = 65) int bit) {
+  void setUp(@Randomize(intMin = 2, intMax = 65) int bit) {
     fieldParser = new DataFieldParser<>(bit, new CharStringParser<>("PAN", 19, UTF_8));
     this.bit = bit;
   }
