@@ -112,4 +112,24 @@ class StringParsersTest {
     DataParser<TestData, String> parser = StringParsers.bcd("bcd", 2);
     assertThat(parser.parse(input)).isEqualTo(bcdString);
   }
+
+  @Test
+  void ubyte_bcd(@Randomize(intMin = 0, intMax = 999999999) int value) throws IOException {
+    String stringValue = Integer.toString(value);
+    String padded = stringValue.length() % 2 == 0 ? stringValue : "0" + stringValue;
+    byte[] bytes = HexFormat.of().parseHex(padded);
+    ByteBuffer buffer = ByteBuffer.allocate(Byte.BYTES + bytes.length);
+    buffer.put((byte) stringValue.length());
+    buffer.put(bytes);
+    ByteArrayInputStream input = new ByteArrayInputStream(buffer.array());
+
+    DataParser<TestData, String> parser = StringParsers.ubyteBcd("ubyte-bcd");
+
+    String parsed = parser.parse(input);
+    assertThat(parsed).isEqualTo(stringValue);
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    parser.pack(parsed, output);
+    assertThat(output.toByteArray()).isEqualTo(buffer.array());
+  }
 }

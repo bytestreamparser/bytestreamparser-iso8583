@@ -52,4 +52,12 @@ public final class StringParsers {
   public static <P extends Data<P>> StringParser<P> bcd(String id, int length) {
     return new BcdStringParser<>(id, length);
   }
+
+  public static <P extends Data<P>> DataParser<P, String> ubyteBcd(String id) {
+    return new VariableLengthParser<>(
+        id,
+        IntegerParsers.ubyte(id),
+        length -> bcd(id, length),
+        string -> (int) string.codePoints().count());
+  }
 }
