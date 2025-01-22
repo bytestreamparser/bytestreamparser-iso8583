@@ -54,6 +54,30 @@ class BinaryParsersTest {
   }
 
   @Test
+  void ll_bin(@Randomize(intMin = 1, intMax = 10) int length, @Randomize(length = 10) byte[] value)
+      throws IOException {
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    output.write(String.format("%02d", length).getBytes());
+    output.write(value);
+    DataParser<TestData, byte[]> parser = BinaryParsers.llBin("ll-bin");
+    ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
+    assertThat(parser.parse(input)).isEqualTo(Arrays.copyOfRange(value, 0, length));
+    assertThat(input.available()).isEqualTo(value.length - length);
+  }
+
+  @Test
+  void lll_bin(@Randomize(intMin = 1, intMax = 10) int length, @Randomize(length = 10) byte[] value)
+      throws IOException {
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    output.write(String.format("%03d", length).getBytes());
+    output.write(value);
+    DataParser<TestData, byte[]> parser = BinaryParsers.lllBin("lll-bin");
+    ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
+    assertThat(parser.parse(input)).isEqualTo(Arrays.copyOfRange(value, 0, length));
+    assertThat(input.available()).isEqualTo(value.length - length);
+  }
+
+  @Test
   void bmp(@Randomize byte[] value) throws IOException {
     DataParser<TestData, FixedBitmap> parser = BinaryParsers.bmp("bitmap", value.length);
     ByteArrayInputStream input = new ByteArrayInputStream(value);

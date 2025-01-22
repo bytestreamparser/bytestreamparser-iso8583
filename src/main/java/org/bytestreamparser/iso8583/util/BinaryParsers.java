@@ -24,6 +24,14 @@ public final class BinaryParsers {
     return varBin(id, IntegerParsers.ushort(id));
   }
 
+  public static <P extends Data<P>> DataParser<P, byte[]> llBin(String id) {
+    return varBin(id, IntegerParsers.plain(id, 2));
+  }
+
+  public static <P extends Data<P>> DataParser<P, byte[]> lllBin(String id) {
+    return varBin(id, IntegerParsers.plain(id, 3));
+  }
+
   public static <P extends Data<P>> DataParser<P, byte[]> varBin(
       String id, DataParser<?, Integer> lengthParser) {
     return new VariableLengthParser<>(
