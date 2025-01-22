@@ -28,6 +28,14 @@ public final class StringParsers {
     return varPlain(id, IntegerParsers.ushort(id), charset);
   }
 
+  public static <P extends Data<P>> DataParser<P, String> llPlain(String id) {
+    return varPlain(id, IntegerParsers.plain(id, 2), Charset.defaultCharset());
+  }
+
+  public static <P extends Data<P>> DataParser<P, String> lllPlain(String id) {
+    return varPlain(id, IntegerParsers.plain(id, 3), Charset.defaultCharset());
+  }
+
   public static <P extends Data<P>> DataParser<P, String> varPlain(
       String id, DataParser<?, Integer> lengthParser, Charset charset) {
     return new VariableLengthParser<>(

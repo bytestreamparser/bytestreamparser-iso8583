@@ -73,6 +73,32 @@ class StringParsersTest {
   }
 
   @Test
+  void ll_plain(
+      @Randomize(intMin = 1, intMax = 10) int length, @Randomize(length = 10) String value)
+      throws IOException {
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    output.write(String.format("%02d", length).getBytes());
+    output.write(value.getBytes());
+    DataParser<TestData, String> parser = StringParsers.llPlain("ll-plain");
+    ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
+    assertThat(parser.parse(input)).isEqualTo(value.substring(0, length));
+    assertThat(input.available()).isEqualTo(value.length() - length);
+  }
+
+  @Test
+  void lll_plain(
+      @Randomize(intMin = 1, intMax = 10) int length, @Randomize(length = 10) String value)
+      throws IOException {
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    output.write(String.format("%03d", length).getBytes());
+    output.write(value.getBytes());
+    DataParser<TestData, String> parser = StringParsers.lllPlain("lll-plain");
+    ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
+    assertThat(parser.parse(input)).isEqualTo(value.substring(0, length));
+    assertThat(input.available()).isEqualTo(value.length() - length);
+  }
+
+  @Test
   void hex(@Randomize byte[] value) throws IOException {
     ByteArrayInputStream input = new ByteArrayInputStream(value);
     DataParser<TestData, String> parser = StringParsers.hex("hex", value.length * 2);
