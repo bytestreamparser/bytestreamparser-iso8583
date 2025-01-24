@@ -24,6 +24,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           server-id: github
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
           cache: maven
 
       - name: Cache SonarQube packages
@@ -35,6 +37,7 @@ jobs:
 
       - name: Build with Maven
         env:
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn clean verify
 
