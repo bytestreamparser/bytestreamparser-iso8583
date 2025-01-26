@@ -9,7 +9,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.List;
-import org.bytestreamparser.api.testing.data.TestData;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension.Randomize;
 import org.bytestreamparser.iso8583.data.ExtendableBitmap;
@@ -26,8 +25,7 @@ class ExtendableBitmapParserTest {
     content[0] = (byte) (0b01111111 & content[0]);
     ExtendableBitmap bitmap =
         new ExtendableBitmap(content.length).addExtensions(List.of(FixedBitmap.valueOf(content)));
-    ExtendableBitmapParser<TestData> parser =
-        new ExtendableBitmapParser<>("bitmap", content.length);
+    ExtendableBitmapParser parser = new ExtendableBitmapParser("bitmap", content.length);
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     parser.pack(bitmap, output);
     assertArrayEquals(content, output.toByteArray());
@@ -38,8 +36,7 @@ class ExtendableBitmapParserTest {
     content[0] = (byte) (0b10000000 | content[0]);
     content[content.length / 2] = (byte) (0b01111111 & content[0]);
     ByteArrayInputStream input = new ByteArrayInputStream(content);
-    ExtendableBitmapParser<TestData> parser =
-        new ExtendableBitmapParser<>("bitmap", content.length / 2);
+    ExtendableBitmapParser parser = new ExtendableBitmapParser("bitmap", content.length / 2);
     ExtendableBitmap bitmap = parser.parse(input);
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     parser.pack(bitmap, output);
@@ -50,8 +47,7 @@ class ExtendableBitmapParserTest {
   void pack_insufficient_data(@Randomize byte[] content) {
     ExtendableBitmap bitmap =
         new ExtendableBitmap(content.length).addExtensions(List.of(FixedBitmap.valueOf(content)));
-    ExtendableBitmapParser<TestData> parser =
-        new ExtendableBitmapParser<>("bitmap", content.length + 1);
+    ExtendableBitmapParser parser = new ExtendableBitmapParser("bitmap", content.length + 1);
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     assertThatThrownBy(() -> parser.pack(bitmap, output))
         .isInstanceOf(IllegalArgumentException.class)
@@ -64,8 +60,7 @@ class ExtendableBitmapParserTest {
   void pack_oversize_data(@Randomize byte[] content) {
     ExtendableBitmap bitmap =
         new ExtendableBitmap(content.length).addExtensions(List.of(FixedBitmap.valueOf(content)));
-    ExtendableBitmapParser<TestData> parser =
-        new ExtendableBitmapParser<>("bitmap", content.length - 1);
+    ExtendableBitmapParser parser = new ExtendableBitmapParser("bitmap", content.length - 1);
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     assertThatThrownBy(() -> parser.pack(bitmap, output))
         .isInstanceOf(IllegalArgumentException.class)
@@ -78,8 +73,7 @@ class ExtendableBitmapParserTest {
   void parse(@Randomize byte[] content) throws IOException {
     content[0] = (byte) (0b01111111 & content[0]);
     ByteArrayInputStream input = new ByteArrayInputStream(content);
-    ExtendableBitmapParser<TestData> parser =
-        new ExtendableBitmapParser<>("bitmap", content.length);
+    ExtendableBitmapParser parser = new ExtendableBitmapParser("bitmap", content.length);
     ExtendableBitmap bitmap = parser.parse(input);
     char[] chars = TestHelper.toBinaryString(content).toCharArray();
     for (int index = 0; index < chars.length; index++) {
@@ -93,8 +87,7 @@ class ExtendableBitmapParserTest {
     content[content.length / 2] = (byte) (0b01111111 & content[content.length / 2]);
     content[content.length / 2] = (byte) (0b00000001 | content[content.length / 2]);
     ByteArrayInputStream input = new ByteArrayInputStream(content);
-    ExtendableBitmapParser<TestData> parser =
-        new ExtendableBitmapParser<>("bitmap", content.length / 2);
+    ExtendableBitmapParser parser = new ExtendableBitmapParser("bitmap", content.length / 2);
     ExtendableBitmap bitmap = parser.parse(input);
     char[] chars = TestHelper.toBinaryString(content).toCharArray();
     for (int index = 0; index < chars.length; index++) {
@@ -105,8 +98,7 @@ class ExtendableBitmapParserTest {
   @Test
   void parse_insufficient_data(@Randomize byte[] content) {
     ByteArrayInputStream input = new ByteArrayInputStream(content);
-    ExtendableBitmapParser<TestData> parser =
-        new ExtendableBitmapParser<>("id", content.length + 1);
+    ExtendableBitmapParser parser = new ExtendableBitmapParser("id", content.length + 1);
     assertThatThrownBy(() -> parser.parse(input))
         .isInstanceOf(EOFException.class)
         .hasMessage(

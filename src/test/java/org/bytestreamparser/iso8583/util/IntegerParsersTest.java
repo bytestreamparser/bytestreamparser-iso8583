@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.HexFormat;
 import org.bytestreamparser.api.parser.DataParser;
-import org.bytestreamparser.api.testing.data.TestData;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension.Randomize;
 import org.junit.jupiter.api.Test;
@@ -21,14 +20,14 @@ class IntegerParsersTest {
 
   @Test
   void ubyte(@Randomize byte[] value) throws IOException {
-    DataParser<TestData, Integer> parser = IntegerParsers.ubyte("ubyte");
+    DataParser<Integer> parser = IntegerParsers.ubyte("ubyte");
     ByteArrayInputStream input = new ByteArrayInputStream(value);
     assertThat(parser.parse(input)).isEqualTo(value[0] & 0xFF);
   }
 
   @Test
   void ushort(@Randomize byte[] value) throws IOException {
-    DataParser<TestData, Integer> parser = IntegerParsers.ushort("ushort");
+    DataParser<Integer> parser = IntegerParsers.ushort("ushort");
     ByteArrayInputStream input = new ByteArrayInputStream(value);
     int expected = ((int) value[0] & 0xFF) << 8 | value[1] & 0xFF;
     assertThat(parser.parse(input)).isEqualTo(expected);
@@ -45,8 +44,7 @@ class IntegerParsersTest {
     Charset charset = Charset.forName(charsetName);
     String string = Integer.toString(value, radix);
     InputStream input = new ByteArrayInputStream(string.getBytes(charset));
-    DataParser<TestData, Integer> parser =
-        IntegerParsers.plain(charsetName, string.length(), radix, charset);
+    DataParser<Integer> parser = IntegerParsers.plain(charsetName, string.length(), radix, charset);
     assertThat(parser.parse(input)).isEqualTo(value);
   }
 
@@ -55,13 +53,13 @@ class IntegerParsersTest {
     Charset charset = Charset.defaultCharset();
     String string = Integer.toString(value);
     InputStream input = new ByteArrayInputStream(string.getBytes(charset));
-    DataParser<TestData, Integer> parser = IntegerParsers.plain(charset.name(), string.length());
+    DataParser<Integer> parser = IntegerParsers.plain(charset.name(), string.length());
     assertThat(parser.parse(input)).isEqualTo(value);
   }
 
   @Test
   void bcd(@Randomize(intMin = 0, intMax = 100) int value) throws IOException {
-    DataParser<TestData, Integer> parser = IntegerParsers.bcd("bcd", 2);
+    DataParser<Integer> parser = IntegerParsers.bcd("bcd", 2);
     ByteArrayInputStream input =
         new ByteArrayInputStream(HexFormat.of().parseHex(String.format("%02d", value)));
     assertThat(parser.parse(input)).isEqualTo(value);

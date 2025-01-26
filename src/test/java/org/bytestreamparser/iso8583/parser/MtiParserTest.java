@@ -6,7 +6,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HexFormat;
-import org.bytestreamparser.api.testing.data.TestData;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension.Randomize;
 import org.bytestreamparser.iso8583.data.MessageTypeIndicator;
@@ -17,11 +16,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(RandomParametersExtension.class)
 class MtiParserTest {
-  private MtiParser<TestData> parser;
+  private MtiParser parser;
 
   @BeforeEach
   void setUp() {
-    parser = new MtiParser<>(new BcdStringParser<TestData>("mti", 4));
+    parser = new MtiParser(new BcdStringParser("mti", 4));
   }
 
   @Test

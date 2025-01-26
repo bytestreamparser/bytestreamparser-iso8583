@@ -8,7 +8,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import org.bytestreamparser.api.testing.data.TestData;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension.Randomize;
 import org.bytestreamparser.iso8583.data.FixedBitmap;
@@ -22,7 +21,7 @@ class FixedBitmapParserTest {
   @Test
   void pack(@Randomize byte[] content) throws IOException {
     FixedBitmap bitmap = FixedBitmap.valueOf(content);
-    FixedBitmapParser<TestData> parser = new FixedBitmapParser<>("bitmap", content.length);
+    FixedBitmapParser parser = new FixedBitmapParser("bitmap", content.length);
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     parser.pack(bitmap, output);
     assertArrayEquals(content, output.toByteArray());
@@ -31,7 +30,7 @@ class FixedBitmapParserTest {
   @Test
   void pack_insufficient_data(@Randomize byte[] content) {
     FixedBitmap bitmap = FixedBitmap.valueOf(content);
-    FixedBitmapParser<TestData> parser = new FixedBitmapParser<>("bitmap", content.length + 1);
+    FixedBitmapParser parser = new FixedBitmapParser("bitmap", content.length + 1);
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     assertThatThrownBy(() -> parser.pack(bitmap, output))
         .isInstanceOf(IllegalArgumentException.class)
@@ -42,7 +41,7 @@ class FixedBitmapParserTest {
   @Test
   void pack_oversize_data(@Randomize byte[] content) {
     FixedBitmap bitmap = FixedBitmap.valueOf(content);
-    FixedBitmapParser<TestData> parser = new FixedBitmapParser<>("bitmap", content.length - 1);
+    FixedBitmapParser parser = new FixedBitmapParser("bitmap", content.length - 1);
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     assertThatThrownBy(() -> parser.pack(bitmap, output))
         .isInstanceOf(IllegalArgumentException.class)
@@ -53,7 +52,7 @@ class FixedBitmapParserTest {
   @Test
   void parse(@Randomize byte[] content) throws IOException {
     ByteArrayInputStream input = new ByteArrayInputStream(content);
-    FixedBitmapParser<TestData> parser = new FixedBitmapParser<>("id", content.length);
+    FixedBitmapParser parser = new FixedBitmapParser("id", content.length);
     FixedBitmap bitmap = parser.parse(input);
     char[] chars = TestHelper.toBinaryString(content).toCharArray();
     for (int index = 0; index < chars.length; index++) {
@@ -64,7 +63,7 @@ class FixedBitmapParserTest {
   @Test
   void parse_insufficient_data(@Randomize byte[] content) {
     ByteArrayInputStream input = new ByteArrayInputStream(content);
-    FixedBitmapParser<TestData> parser = new FixedBitmapParser<>("id", content.length + 1);
+    FixedBitmapParser parser = new FixedBitmapParser("id", content.length + 1);
     assertThatThrownBy(() -> parser.parse(input))
         .isInstanceOf(EOFException.class)
         .hasMessage(
