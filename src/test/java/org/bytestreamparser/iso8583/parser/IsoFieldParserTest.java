@@ -19,13 +19,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 @ExtendWith(RandomParametersExtension.class)
-class DataFieldParserTest {
-  private DataFieldParser<TestIsoMessage, String> fieldParser;
+class IsoFieldParserTest {
+  private IsoFieldParser<TestIsoMessage, String> fieldParser;
   private int bit;
 
   @BeforeEach
   void setUp(@Randomize(intMin = 2, intMax = 65) int bit) {
-    fieldParser = new DataFieldParser<>(bit, new CharStringParser<>("PAN", 19, UTF_8));
+    fieldParser = new IsoFieldParser<>(bit, new CharStringParser("PAN", 19, UTF_8));
     this.bit = bit;
   }
 

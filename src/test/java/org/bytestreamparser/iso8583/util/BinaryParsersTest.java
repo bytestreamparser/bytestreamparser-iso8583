@@ -7,7 +7,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import org.bytestreamparser.api.parser.DataParser;
-import org.bytestreamparser.api.testing.data.TestData;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension.Randomize;
 import org.bytestreamparser.iso8583.data.ExtendableBitmap;
@@ -21,7 +20,7 @@ class BinaryParsersTest {
 
   @Test
   void bin(@Randomize byte[] value) throws IOException {
-    DataParser<TestData, byte[]> parser = BinaryParsers.bin("id", value.length);
+    DataParser<byte[]> parser = BinaryParsers.bin("id", value.length);
     ByteArrayInputStream input = new ByteArrayInputStream(value);
     assertThat(parser.parse(input)).isEqualTo(value);
   }
@@ -29,7 +28,7 @@ class BinaryParsersTest {
   @Test
   void ubyte_bin(@Randomize(length = 10) byte[] value) throws IOException {
     value[0] = 4;
-    DataParser<TestData, byte[]> parser = BinaryParsers.ubyteBin("ubyte-bin");
+    DataParser<byte[]> parser = BinaryParsers.ubyteBin("ubyte-bin");
     ByteArrayInputStream input = new ByteArrayInputStream(value);
 
     assertThat(parser.parse(input)).isEqualTo(Arrays.copyOfRange(value, 1, 5));
@@ -47,7 +46,7 @@ class BinaryParsersTest {
   void ushort_bin(@Randomize(length = 10) byte[] value) throws IOException {
     value[0] = 0;
     value[1] = 3;
-    DataParser<TestData, byte[]> parser = BinaryParsers.ushortBin("ushort-bin");
+    DataParser<byte[]> parser = BinaryParsers.ushortBin("ushort-bin");
     ByteArrayInputStream input = new ByteArrayInputStream(value);
     assertThat(parser.parse(input)).isEqualTo(Arrays.copyOfRange(value, 2, 5));
     assertThat(input.available()).isEqualTo(5);
@@ -59,7 +58,7 @@ class BinaryParsersTest {
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     output.write(String.format("%02d", length).getBytes());
     output.write(value);
-    DataParser<TestData, byte[]> parser = BinaryParsers.llBin("ll-bin");
+    DataParser<byte[]> parser = BinaryParsers.llBin("ll-bin");
     ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
     assertThat(parser.parse(input)).isEqualTo(Arrays.copyOfRange(value, 0, length));
     assertThat(input.available()).isEqualTo(value.length - length);
@@ -71,7 +70,7 @@ class BinaryParsersTest {
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     output.write(String.format("%03d", length).getBytes());
     output.write(value);
-    DataParser<TestData, byte[]> parser = BinaryParsers.lllBin("lll-bin");
+    DataParser<byte[]> parser = BinaryParsers.lllBin("lll-bin");
     ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
     assertThat(parser.parse(input)).isEqualTo(Arrays.copyOfRange(value, 0, length));
     assertThat(input.available()).isEqualTo(value.length - length);
@@ -79,7 +78,7 @@ class BinaryParsersTest {
 
   @Test
   void bmp(@Randomize byte[] value) throws IOException {
-    DataParser<TestData, FixedBitmap> parser = BinaryParsers.bmp("bitmap", value.length);
+    DataParser<FixedBitmap> parser = BinaryParsers.bmp("bitmap", value.length);
     ByteArrayInputStream input = new ByteArrayInputStream(value);
     FixedBitmap parsed = parser.parse(input);
     FixedBitmap expected = FixedBitmap.valueOf(value);
@@ -95,7 +94,7 @@ class BinaryParsersTest {
     value[value.length / 2] = (byte) (0b01111111 & value[value.length / 2]);
     value[value.length / 2] = (byte) (0b00000001 | value[value.length / 2]);
     ByteArrayInputStream input = new ByteArrayInputStream(value);
-    DataParser<TestData, ExtendableBitmap> parser = BinaryParsers.ebmp("bitmap", value.length / 2);
+    DataParser<ExtendableBitmap> parser = BinaryParsers.ebmp("bitmap", value.length / 2);
     ExtendableBitmap parsed = parser.parse(input);
     char[] chars = TestHelper.toBinaryString(value).toCharArray();
     for (int index = 0; index < chars.length; index++) {
