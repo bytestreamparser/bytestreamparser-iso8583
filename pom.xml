@@ -84,7 +84,7 @@
             <dependency>
                 <groupId>org.bytestreamparser</groupId>
                 <artifactId>api-testing</artifactId>
-                <version>0.3.2</version>
+                <version>0.4.1</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
