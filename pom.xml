@@ -60,7 +60,7 @@
             <dependency>
                 <groupId>org.bytestreamparser</groupId>
                 <artifactId>composite-parser</artifactId>
-                <version>0.4.0</version>
+                <version>0.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.junit</groupId>
@@ -84,7 +84,7 @@
             <dependency>
                 <groupId>org.bytestreamparser</groupId>
                 <artifactId>api-testing</artifactId>
-                <version>0.4.1</version>
+                <version>0.4.2</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

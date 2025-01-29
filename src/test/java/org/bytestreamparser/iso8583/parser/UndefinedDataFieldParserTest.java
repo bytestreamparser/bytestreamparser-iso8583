@@ -22,8 +22,9 @@ class UndefinedDataFieldParserTest {
 
   @Test
   void pack() {
+    Object value = new Object();
     ByteArrayOutputStream output = new ByteArrayOutputStream();
-    assertThatThrownBy(() -> parser.pack(new Object(), output))
+    assertThatThrownBy(() -> parser.pack(value, output))
         .isInstanceOf(UnsupportedOperationException.class)
         .hasMessage("%s: Undefined data field", parser.getId());
   }
