@@ -6,17 +6,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.List;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension;
 import org.bytestreamparser.api.testing.extension.RandomParametersExtension.Randomize;
-import org.bytestreamparser.iso8583.data.ExtendableBitmap;
-import org.bytestreamparser.iso8583.data.FixedBitmap;
-import org.bytestreamparser.iso8583.data.IsoMessage;
+import org.bytestreamparser.iso8583.helper.TestIsoMessage;
 import org.bytestreamparser.scalar.parser.CharStringParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 
 @ExtendWith(RandomParametersExtension.class)
 class IsoFieldParserTest {
@@ -24,23 +20,21 @@ class IsoFieldParserTest {
   private int bit;
 
   @BeforeEach
-  void setUp(@Randomize(intMin = 2, intMax = 65) int bit) {
+  void setUp(@Randomize(intMin = 2) int bit) {
     fieldParser = new IsoFieldParser<>(bit, new CharStringParser("PAN", 19, UTF_8));
     this.bit = bit;
   }
 
   @Test
   void applicable() {
-    ExtendableBitmap bitmap = new ExtendableBitmap(8).addExtensions(List.of(new FixedBitmap(8)));
-    TestIsoMessage message = Mockito.spy(TestIsoMessage.class);
-    Mockito.when(message.getBitmap()).thenReturn(bitmap);
+    TestIsoMessage message = new TestIsoMessage();
 
     assertThat(fieldParser.applicable(message)).isFalse();
 
-    bitmap.set(bit);
+    message.set(String.valueOf(bit), "1234567890123456789");
     assertThat(fieldParser.applicable(message)).isTrue();
 
-    bitmap.clear(bit);
+    message.clear(String.valueOf(bit));
     assertThat(fieldParser.applicable(message)).isFalse();
   }
 
@@ -56,6 +50,4 @@ class IsoFieldParserTest {
     ByteArrayInputStream input = new ByteArrayInputStream(value.getBytes(UTF_8));
     assertThat(fieldParser.parse(input)).isEqualTo(value);
   }
-
-  public interface TestIsoMessage extends IsoMessage<TestIsoMessage> {}
 }
