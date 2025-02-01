@@ -24,11 +24,11 @@ public final class BinaryParsers {
   }
 
   public static DataParser<byte[]> textLLVar(String id) {
-    return variableLength(id, IntegerParsers.plain(id, 2));
+    return variableLength(id, IntegerParsers.text(id, 2));
   }
 
   public static DataParser<byte[]> textLLLVar(String id) {
-    return variableLength(id, IntegerParsers.plain(id, 3));
+    return variableLength(id, IntegerParsers.text(id, 3));
   }
 
   public static DataParser<byte[]> variableLength(String id, DataParser<Integer> lengthParser) {

@@ -20,7 +20,7 @@ class LongParsersTest {
   @ParameterizedTest
   @ValueSource(
       strings = {"US-ASCII", "IBM1047", "ISO-8859-1", "UTF-8", "UTF-16", "UTF-16BE", "UTF-16LE"})
-  void plain(
+  void text(
       String charsetName,
       @Randomize long value,
       @Randomize(intMin = Character.MIN_RADIX, intMax = Character.MAX_RADIX + 1) int radix)
@@ -28,16 +28,16 @@ class LongParsersTest {
     Charset charset = Charset.forName(charsetName);
     String string = Long.toString(value, radix);
     InputStream input = new ByteArrayInputStream(string.getBytes(charset));
-    DataParser<Long> parser = LongParsers.plain(charsetName, string.length(), radix, charset);
+    DataParser<Long> parser = LongParsers.text(charsetName, string.length(), radix, charset);
     assertThat(parser.parse(input)).isEqualTo(value);
   }
 
   @Test
-  void plain_with_default_radix(@Randomize long value) throws IOException {
+  void text_with_default_radix(@Randomize long value) throws IOException {
     Charset charset = Charset.defaultCharset();
     String string = Long.toString(value);
     InputStream input = new ByteArrayInputStream(string.getBytes(charset));
-    DataParser<Long> parser = LongParsers.plain(charset.name(), string.length());
+    DataParser<Long> parser = LongParsers.text(charset.name(), string.length());
     assertThat(parser.parse(input)).isEqualTo(value);
   }
 

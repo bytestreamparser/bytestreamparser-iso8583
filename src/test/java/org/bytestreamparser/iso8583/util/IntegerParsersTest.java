@@ -36,7 +36,7 @@ class IntegerParsersTest {
   @ParameterizedTest
   @ValueSource(
       strings = {"US-ASCII", "IBM1047", "ISO-8859-1", "UTF-8", "UTF-16", "UTF-16BE", "UTF-16LE"})
-  void plain(
+  void text(
       String charsetName,
       @Randomize Integer value,
       @Randomize(intMin = Character.MIN_RADIX, intMax = Character.MAX_RADIX + 1) int radix)
@@ -44,16 +44,16 @@ class IntegerParsersTest {
     Charset charset = Charset.forName(charsetName);
     String string = Integer.toString(value, radix);
     InputStream input = new ByteArrayInputStream(string.getBytes(charset));
-    DataParser<Integer> parser = IntegerParsers.plain(charsetName, string.length(), radix, charset);
+    DataParser<Integer> parser = IntegerParsers.text(charsetName, string.length(), radix, charset);
     assertThat(parser.parse(input)).isEqualTo(value);
   }
 
   @Test
-  void plain_with_default_radix(@Randomize Integer value) throws IOException {
+  void text_with_default_radix(@Randomize Integer value) throws IOException {
     Charset charset = Charset.defaultCharset();
     String string = Integer.toString(value);
     InputStream input = new ByteArrayInputStream(string.getBytes(charset));
-    DataParser<Integer> parser = IntegerParsers.plain(charset.name(), string.length());
+    DataParser<Integer> parser = IntegerParsers.text(charset.name(), string.length());
     assertThat(parser.parse(input)).isEqualTo(value);
   }
 

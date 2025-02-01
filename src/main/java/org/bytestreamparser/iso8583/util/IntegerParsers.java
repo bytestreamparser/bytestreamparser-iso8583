@@ -17,15 +17,16 @@ public final class IntegerParsers {
     return new UnsignedShortParser(id);
   }
 
-  public static DataParser<Integer> plain(String id, int length) {
-    return plain(id, length, 10, Charset.defaultCharset());
+  public static DataParser<Integer> text(String id, int length) {
+    return text(id, length, 10, Charset.defaultCharset());
   }
 
-  public static DataParser<Integer> plain(String id, int length, int radix, Charset charset) {
-    return new StringIntegerParser(id, StringParsers.plain(id, length, charset), length, radix);
+  public static DataParser<Integer> text(String id, int length, int radix, Charset charset) {
+    return new StringIntegerParser(
+        id, StringParsers.fixedLength(id, length, charset), length, radix);
   }
 
   public static DataParser<Integer> bcd(String id, int length) {
-    return new StringIntegerParser(id, StringParsers.bcd(id, length), length, 10);
+    return new StringIntegerParser(id, StringParsers.fixedLengthBcd(id, length), length, 10);
   }
 }
