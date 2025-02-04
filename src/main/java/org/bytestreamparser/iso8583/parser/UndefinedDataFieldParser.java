@@ -5,16 +5,19 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import org.bytestreamparser.api.parser.DataParser;
 
+/** A parser for undefined data fields. */
 public class UndefinedDataFieldParser extends DataParser<Object> {
   public UndefinedDataFieldParser(String id) {
     super(id);
   }
 
+  /** Throws an UnsupportedOperationException. */
   @Override
-  public void pack(Object value, OutputStream output) throws IOException {
+  public void pack(Object value, OutputStream output) {
     throw getException();
   }
 
+  /** Throws an UnsupportedOperationException. */
   @Override
   public Object parse(InputStream input) throws IOException {
     throw getException();

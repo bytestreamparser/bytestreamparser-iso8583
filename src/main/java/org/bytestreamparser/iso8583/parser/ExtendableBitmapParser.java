@@ -11,12 +11,19 @@ import org.bytestreamparser.api.parser.DataParser;
 import org.bytestreamparser.iso8583.data.ExtendableBitmap;
 import org.bytestreamparser.iso8583.data.FixedBitmap;
 
+/** A parser for parsing an {@link ExtendableBitmap}. */
 public class ExtendableBitmapParser extends DataParser<ExtendableBitmap> {
   private static final String ERROR_MESSAGE =
       "%s: value must be a multiple of %d bytes, but got [%d]";
   private final int bytes;
   private final FixedBitmapParser bitmapParser;
 
+  /**
+   * Creates a new ExtendableBitmapParser.
+   *
+   * @param id the ID of the parser.
+   * @param bytes the number of bytes per bitmap.
+   */
   public ExtendableBitmapParser(String id, int bytes) {
     super(id);
     this.bytes = bytes;

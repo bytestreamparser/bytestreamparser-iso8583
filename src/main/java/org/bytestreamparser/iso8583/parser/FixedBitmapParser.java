@@ -9,10 +9,17 @@ import java.io.OutputStream;
 import org.bytestreamparser.api.parser.DataParser;
 import org.bytestreamparser.iso8583.data.FixedBitmap;
 
+/** A parser for parsing a {@link FixedBitmap}. */
 public class FixedBitmapParser extends DataParser<FixedBitmap> {
   private static final String ERROR_MESSAGE = "%s: value must be %d bytes, but got [%d]";
   private final int bytes;
 
+  /**
+   * Creates a new FixedBitmapParser.
+   *
+   * @param id the ID of the parser.
+   * @param bytes the number of bytes in the bitmap.
+   */
   public FixedBitmapParser(String id, int bytes) {
     super(id);
     this.bytes = bytes;
