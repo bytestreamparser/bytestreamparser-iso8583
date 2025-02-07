@@ -4,12 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
+import io.github.lyang.randomparamsresolver.RandomParametersExtension;
+import io.github.lyang.randomparamsresolver.RandomParametersExtension.Randomize;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import org.bytestreamparser.api.testing.extension.RandomParametersExtension;
-import org.bytestreamparser.api.testing.extension.RandomParametersExtension.Randomize;
 import org.bytestreamparser.iso8583.data.FixedBitmap;
 import org.bytestreamparser.iso8583.helper.TestHelper;
 import org.junit.jupiter.api.Test;

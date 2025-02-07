@@ -59,8 +59,8 @@
         <dependencies>
             <dependency>
                 <groupId>org.bytestreamparser</groupId>
-                <artifactId>composite-parser</artifactId>
-                <version>0.4.3</version>
+                <artifactId>core</artifactId>
+                <version>0.5.0</version>
             </dependency>
             <dependency>
                 <groupId>org.junit</groupId>
@@ -82,9 +82,9 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.bytestreamparser</groupId>
-                <artifactId>api-testing</artifactId>
-                <version>0.4.3</version>
+                <groupId>io.github.lyang</groupId>
+                <artifactId>random-params-resolver</artifactId>
+                <version>0.0.1</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -93,7 +93,7 @@
     <dependencies>
         <dependency>
             <groupId>org.bytestreamparser</groupId>
-            <artifactId>composite-parser</artifactId>
+            <artifactId>core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -116,8 +116,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.bytestreamparser</groupId>
-            <artifactId>api-testing</artifactId>
+            <groupId>io.github.lyang</groupId>
+            <artifactId>random-params-resolver</artifactId>
         </dependency>
     </dependencies>
 
