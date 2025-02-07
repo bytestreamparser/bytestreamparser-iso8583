@@ -2,10 +2,10 @@ package org.bytestreamparser.iso8583.parser;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import io.github.lyang.randomparamsresolver.RandomParametersExtension;
+import io.github.lyang.randomparamsresolver.RandomParametersExtension.Randomize;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import org.bytestreamparser.api.testing.extension.RandomParametersExtension;
-import org.bytestreamparser.api.testing.extension.RandomParametersExtension.Randomize;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

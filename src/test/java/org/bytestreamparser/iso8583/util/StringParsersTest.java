@@ -2,6 +2,8 @@ package org.bytestreamparser.iso8583.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.github.lyang.randomparamsresolver.RandomParametersExtension;
+import io.github.lyang.randomparamsresolver.RandomParametersExtension.Randomize;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,8 +11,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.HexFormat;
 import org.bytestreamparser.api.parser.DataParser;
-import org.bytestreamparser.api.testing.extension.RandomParametersExtension;
-import org.bytestreamparser.api.testing.extension.RandomParametersExtension.Randomize;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;

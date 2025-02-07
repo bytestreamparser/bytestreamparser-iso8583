@@ -3,9 +3,9 @@ package org.bytestreamparser.iso8583.data;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import io.github.lyang.randomparamsresolver.RandomParametersExtension;
+import io.github.lyang.randomparamsresolver.RandomParametersExtension.Randomize;
 import java.util.random.RandomGenerator;
-import org.bytestreamparser.api.testing.extension.RandomParametersExtension;
-import org.bytestreamparser.api.testing.extension.RandomParametersExtension.Randomize;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 

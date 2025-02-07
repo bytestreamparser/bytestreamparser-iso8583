@@ -2,13 +2,13 @@ package org.bytestreamparser.iso8583.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.github.lyang.randomparamsresolver.RandomParametersExtension;
+import io.github.lyang.randomparamsresolver.RandomParametersExtension.Randomize;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import org.bytestreamparser.api.parser.DataParser;
-import org.bytestreamparser.api.testing.extension.RandomParametersExtension;
-import org.bytestreamparser.api.testing.extension.RandomParametersExtension.Randomize;
 import org.bytestreamparser.iso8583.data.ExtendableBitmap;
 import org.bytestreamparser.iso8583.data.FixedBitmap;
 import org.bytestreamparser.iso8583.helper.TestHelper;
